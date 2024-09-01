@@ -8,10 +8,10 @@ function [demodulated_signal] = Demodulation(signal, mod_type)
     end
 
 if strcmp(mod_type, 'QPSK')
-    demodulated_signal = pskdemod(signal, 4, inputType='bit');
+    demodulated_signal = pskdemod(signal, 4, OutputType='bit');
 
 elseif strcmp(mod_type, 'BPSK')
-    demodulated_signal = pskdemod(signal, 2, inputType='bit');
+    demodulated_signal = pskdemod(signal, 2, OutputType='bit');
 
 else
 
@@ -23,7 +23,7 @@ else
         error('Modulation use BPSK, QPSK, M-PSK (M is the nouber of PSK Symmbols (need to be power of 2))')
     end
 
-    demodulated_signal = pskdemod(signal, mod_symbols, inputType='bit');    
+    demodulated_signal = pskdemod(signal, mod_symbols, OutputType='bit');    
 
 end
 
