@@ -8,11 +8,13 @@ function [BER] = Calculate_error(data_tx, data_rx, using_viterbi)
 
     if strcmp(using_viterbi, 'true')
         error = comm.ErrorRate(ComputationDelay=3,ReceiveDelay=34);
-        [BER, ~] = error(data_tx, data_rx);
-    
+        BER = error(data_tx, data_rx);
+        BER = BER(1);
+        
     else
         error = comm.ErrorRate();
-        [BER, ~] = error(data_tx, data_rx);
+        BER = error(data_tx, data_rx);
+        BER = BER(1);
     end
 
 end
