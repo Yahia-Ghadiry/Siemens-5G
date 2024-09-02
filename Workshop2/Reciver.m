@@ -32,7 +32,7 @@ signal_in = signal_in(line_of_sight:end-multipaths + line_of_sight);
 
     signal_out = reshape(signal_out, size_ofdm_symbol * ofdm_symbols, 1);
 
-    % scatterplot(signal_out);
+    %scatterplot(signal_out);
     
 end
 

@@ -15,7 +15,8 @@ function [BER] = Full_cycle(snr, options)
 
 data_tx = Genrate_PN(options.number_symbols, options.symbol_size, options.PN_type, options.PN_seed);
 scram_data = Scrambler(data_tx);
-coded_data = Convolution(scram_data);
+%[interlived_data, interliver_rand] = Interliver(scram_data);
+coded_data = Convolution(interlived_data);
 mod_signal = Modulation(coded_data, options.MOD_type);
 
 signal_tx = Transmmiter(mod_signal, options.number_symbols, options.cp_size);
@@ -24,7 +25,8 @@ signal_rx = Reciver(signal_channel, options.number_symbols, options.cp_size, opt
 
 demod_signal = Demodulation(signal_rx, options.MOD_type);
 decoded_data = Viterbi(demod_signal);
-data_rx = Descrambler(decoded_data);
+%deinterlived_data = Deinterliver(decoded_data, interliver_rand);
+data_rx = Descrambler(deinterlived_data);
 
 BER = Calculate_error(data_tx, data_rx);
 

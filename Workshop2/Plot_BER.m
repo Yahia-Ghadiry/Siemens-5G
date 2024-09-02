@@ -7,7 +7,7 @@ for psk = psks
     bers = zeros(1, width(snrs));
     disp(psk)
     for i = 1:width(snrs)
-        bers(i) = Full_cycle(snrs(i), MOD_type=psk);
+        bers(i) = Full_cycle(snrs(i), MOD_type=psk, incedent_responce=[2 2.5 1.5]);
     end
     
     semilogy(snrs, bers);
