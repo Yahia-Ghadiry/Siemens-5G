@@ -1,6 +1,13 @@
 function [signal_out] = Reciver(signal_in, ofdm_symbols, cp_size, incedent_resopnce)
 %RECIVER recives the signal, and makes sure the line of sight is used
 
+    arguments 
+        signal_in double
+        ofdm_symbols double
+        cp_size double
+        incedent_resopnce double = [1]
+    end
+
 %TODO add CP and Gauad band options and lengths
 
 multipaths = width(incedent_resopnce);
@@ -24,7 +31,8 @@ signal_in = signal_in(line_of_sight:end-multipaths + line_of_sight);
     end
 
     signal_out = reshape(signal_out, size_ofdm_symbol * ofdm_symbols, 1);
-    scatterplot(signal_out);
+
+    % scatterplot(signal_out);
     
 end
 

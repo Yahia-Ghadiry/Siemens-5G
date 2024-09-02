@@ -2,6 +2,12 @@ function [signal_out] = Transmmiter(signal_in, ofdm_symbols, cp_size)
 %TRANSMMITER Transimts the signal by converting it to time domain 
 % and addes the CP or guard band
 
+    arguments 
+        signal_in double
+        ofdm_symbols double
+        cp_size double
+    
+    end
 
 %TODO add CP and Gauad band options and lengths
 

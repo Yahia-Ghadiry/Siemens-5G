@@ -1,13 +1,13 @@
 function [pn_frames] = Genrate_PN(n_frames, sample_size, sequance_type, seed)
 %GENRATE_PN creates a PN sequance using PN_Sequance name and seed
 %   seed size needs to be compatibale with PN_Name
-
     arguments
         n_frames double = 1
         sample_size double = 1024
         sequance_type char = 'PN11'
         seed double = ones(11)
     end
+
 
 if strcmp(sequance_type, 'PN11')
     if width(seed ~= 11)
