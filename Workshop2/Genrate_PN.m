@@ -1,6 +1,7 @@
 function [pn_frames] = Genrate_PN(n_frames, sample_size, sequance_type, seed)
 %GENRATE_PN creates a PN sequance using PN_Sequance name and seed
 %   seed size needs to be compatibale with PN_Name
+
     arguments
         n_frames double = 1
         sample_size double = 1024

@@ -1,5 +1,6 @@
 function [BER] = Calculate_error(data_tx, data_rx, using_viterbi)
 %CALCULATE_ERROR calculates BER
+
     arguments   
         data_tx double
         data_rx double
