@@ -1,6 +1,7 @@
 #include "Ethernet/Ethernet.h"
 #include <cstdint>
 #include <vector>
+#include <iostream>
 
 using std::vector;
 
@@ -12,9 +13,10 @@ int main()
     
     int TestMaxSize = 1000;
     int TestMinIFGs = 3;
-
+    
     vector<uint8_t> TestPayload(48, 0xFF);
-    EthernetFrame TestFrame(TestDestMAC, TestSrcMAC, EthernetFrame::eCPRI_Type, TestPayload, TestMinIFGs, TestMaxSize);
 
+    EthernetFrame TestFrame(TestDestMAC, TestSrcMAC, EthernetFrame::eCPRI_Type, TestPayload, TestMinIFGs, TestMaxSize);
+    std::cout << TestFrame << std::endl; 
     return 0;
 }

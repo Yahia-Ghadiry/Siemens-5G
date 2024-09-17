@@ -1,5 +1,6 @@
 #include "Ethernet.h"
 #include <cstdint>
+#include <iomanip>
 #include <stdexcept>
 #include <algorithm>
 
@@ -24,7 +25,7 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
     
     int FrameSize = HeadersSize + PayloadSize + FCSSize + MinIFGs;
    
-    FrameSize += FrameSize % 4;
+    FrameSize += 4 - FrameSize % 4;
 
     Frame = vector<uint8_t>(FrameSize);  
     
@@ -48,13 +49,23 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
 
 }
 
-
-
-
-EthernetFrame::~EthernetFrame()
+ostream &operator<<(ostream &os, const EthernetFrame &ethernetFrame)
 {
-
+    int ByteNo = 0;
+    
+    for (const uint8_t &byte: ethernetFrame.Frame)
+    {
+        os << std::setfill('0') << std::setw(2)<< std::uppercase <<std::hex << static_cast<int>(byte);
+        ByteNo++;
+        ByteNo %= 4;
+        if (ByteNo == 0)
+        {
+            os << std::endl;
+        }
+    }
+    return os;
 }
+
 
 void EthernetFrame::CalculateFCS()
 {
@@ -70,4 +81,10 @@ void EthernetFrame::FillIFGs()
         *i = IFG;
         i += 1;
     }
+}
+
+
+EthernetFrame::~EthernetFrame()
+{
+
 }

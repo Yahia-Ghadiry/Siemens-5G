@@ -4,18 +4,21 @@
 #include <cstdint>
 #include <vector>
 #include <array>
+#include <ostream>
 
 using std::vector;
 using std::array;
+using std::ostream;
 
 class EthernetFrame
 {       
     
     public:
-       
-        static constexpr array<uint8_t, 2> eCPRI_Type = {0xAE, 0xFE};
         
+        static constexpr array<uint8_t, 2> eCPRI_Type = {0xAE, 0xFE};
+            
     private:
+        
         int MinIFGs;
         int MaxSize;
         
@@ -37,12 +40,13 @@ class EthernetFrame
         vector<uint8_t> Frame;
         
     public:
+        
+        EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t> SrcMAC, const array<uint8_t, 2> EtherType, const vector<uint8_t> Payload, const int MinIFGS, const int MaxSize);
+        
+        friend ostream &operator<<(ostream &os, const EthernetFrame &EthernetFrame);   
 
-    // TODO make a constructor for string inputs
-    EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t> SrcMAC, const array<uint8_t, 2> EtherType, const vector<uint8_t> Payload, const int MinIFGS, const int MaxSize);
 
-
-    ~EthernetFrame();
+        ~EthernetFrame();
 
     private:
         
