@@ -1,4 +1,5 @@
 #include "Ethernet.h"
+#include <cstdint>
 #include <stdexcept>
 
 using std::invalid_argument;
@@ -21,7 +22,7 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
     
     int FrameSize = HeadersSize + PayloadSize + FCSSize + MinIFGS;
     
-    
+    Frame = vector<uint8_t>(FrameSize);  
 
     CalculateFCS();
 

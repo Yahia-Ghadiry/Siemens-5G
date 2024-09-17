@@ -23,12 +23,12 @@ class EthernetFrame
         static const int FCSSize = 4;
 
         static constexpr array<uint8_t, 8> Preamble_SFD {0xfb, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0xD5};
-        uint8_t *DestMAC;
-        uint8_t *SrcMAC;
-        uint8_t *EtherType;
-        uint8_t *Payload;
+        vector<uint8_t>::iterator DestMAC;
+        vector<uint8_t>::iterator SrcMAC;
+        vector<uint8_t>::iterator EtherType;
+        vector<uint8_t>::iterator Payload;
         int PayloadSize;
-        uint8_t *FCS;
+        vector<uint8_t>::iterator FCS;
 
         static const uint8_t IFG = 0x07;
 
