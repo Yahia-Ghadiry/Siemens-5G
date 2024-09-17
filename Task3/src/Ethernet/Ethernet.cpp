@@ -38,3 +38,21 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
 
 }
 
+
+
+
+EthernetFrame::~EthernetFrame()
+{
+
+}
+
+
+void EthernetFrame::FillIFGS()
+{
+    vector<uint8_t>::iterator i = IFGS;
+    while(i != Frame.end())
+    {
+        *i = IFG;
+        i += 1;
+    }
+}
