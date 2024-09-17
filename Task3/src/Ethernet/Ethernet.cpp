@@ -8,6 +8,7 @@
 
 //tmp
 #include <iostream>
+
 using std::invalid_argument;
 using std::copy;
 
@@ -99,7 +100,45 @@ void EthernetFrame::CalculateFCS()
     std::cout << std::endl;
     uint32_t CRC = 0xFFFFFFFF;
     uint32_t Polynomial = 0x04C11DB7;
+    
+    vector<uint32_t>::iterator curDWORD = FrameDivison.begin();
+    vector<uint32_t>::iterator DivsionCRC = FrameDivison.end() - 1;
 
+    int counter = 22;
+    while(curDWORD != FrameDivison.end() - 1)
+    {
+
+        int firstBit = __builtin_clz(*curDWORD);
+        
+        if (firstBit == 32)
+        {
+            curDWORD++;
+            continue;
+        }
+        else if (firstBit == 31)
+        {
+            *curDWORD = 0;
+            *(curDWORD + 1) ^= Polynomial;
+            curDWORD++;
+            continue;
+        }
+
+        std::cout << firstBit << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << *curDWORD;
+        
+        *curDWORD ^= Polynomial >> (firstBit + 1);
+        *curDWORD ^= 0x1 << (32 - (firstBit + 1));
+        std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << *curDWORD;
+        std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << Polynomial;
+        *(curDWORD + 1) ^= Polynomial << (32 - (firstBit + 1));
+        std::cout << std::endl;
+        for (auto c: FrameDivison)
+        {
+            std::cout << std::setfill('0') << std::setw(8)<< std::uppercase <<std::hex << static_cast<int>(c) << std::endl;
+        }
+        counter--;
+        if (counter == 0)
+            break;
+    }
 
 }
 
