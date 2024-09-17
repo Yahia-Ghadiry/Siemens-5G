@@ -8,7 +8,6 @@ using std::invalid_argument;
 using std::copy;
 
 EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t> SrcMAC, const array<uint8_t, 2> EtherType, const vector<uint8_t> Payload, const int MinIFGs, const int MaxSize)
-    : MinIFGs(MinIFGs), MaxSize(MaxSize)
 {
 
     PayloadSize = Payload.size();
