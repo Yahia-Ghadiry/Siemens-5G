@@ -16,16 +16,19 @@ class EthernetFrame
         static constexpr uint8_t eCPRI_Type[2] = {0xAE, 0xFE};
         
     private:
-        
         int MinIFGs;
         int MaxSize;
+        
+        static const int HeadersSize = 22;
+        static const int FCSSize = 4;
 
         static constexpr array<uint8_t, 8> Preamble_SFD {0xfb, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0xD5};
-        vector<uint8_t> DestMac;
-        vector<uint8_t> SrcMAC;
-        vector<uint8_t> EtherType;
-        vector<uint8_t> Paylod;
-        vector<uint8_t> FCS;
+        uint8_t *DestMAC;
+        uint8_t *SrcMAC;
+        uint8_t *EtherType;
+        uint8_t *Payload;
+        int PayloadSize;
+        uint8_t *FCS;
 
         static const uint8_t IFG = 0x07;
 
