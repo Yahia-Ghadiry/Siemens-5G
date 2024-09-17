@@ -13,7 +13,7 @@ class EthernetFrame
     
     public:
        
-        static constexpr uint8_t eCPRI_Type[2] = {0xAE, 0xFE};
+        static constexpr array<uint8_t, 2> eCPRI_Type = {0xAE, 0xFE};
         
     private:
         int MinIFGs;
