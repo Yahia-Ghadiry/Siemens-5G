@@ -21,10 +21,20 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
 
     
     int FrameSize = HeadersSize + PayloadSize + FCSSize + MinIFGS;
-    
+   
+    FrameSize += FrameSize % 4;
+
     Frame = vector<uint8_t>(FrameSize);  
+    
+    this->DestMAC = Frame.begin() + 8;
+    this->SrcMAC = this->DestMAC + 6;
+    this->EtherType = this->SrcMAC + 6;
+    this->Payload = this->EtherType + 2;
+    this->FCS = this->Payload + PayloadSize;
+    this->IFGS = this->FCS + 4;
 
     CalculateFCS();
+    FillIFGS();
 
 }
 

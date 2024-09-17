@@ -29,6 +29,8 @@ class EthernetFrame
         vector<uint8_t>::iterator Payload;
         int PayloadSize;
         vector<uint8_t>::iterator FCS;
+        vector<uint8_t>::iterator IFGS;
+
 
         static const uint8_t IFG = 0x07;
 
@@ -45,6 +47,7 @@ class EthernetFrame
     private:
         
         void CalculateFCS();
+        void FillIFGS();
     
 };
 
