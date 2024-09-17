@@ -6,8 +6,8 @@
 using std::invalid_argument;
 using std::copy;
 
-EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t> SrcMAC, const vector<uint8_t> EtherType, const vector<uint8_t> Payload, const int MinIFGS, const int MaxSize)
-    : MinIFGs(MinIFGS), MaxSize(MaxSize)
+EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t> SrcMAC, const array<uint8_t, 2> EtherType, const vector<uint8_t> Payload, const int MinIFGs, const int MaxSize)
+    : MinIFGs(MinIFGs), MaxSize(MaxSize)
 {
 
     PayloadSize = Payload.size();
@@ -22,7 +22,7 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
     }
 
     
-    int FrameSize = HeadersSize + PayloadSize + FCSSize + MinIFGS;
+    int FrameSize = HeadersSize + PayloadSize + FCSSize + MinIFGs;
    
     FrameSize += FrameSize % 4;
 
@@ -33,8 +33,10 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
     this->EtherType = this->SrcMAC + 6;
     this->Payload = this->EtherType + 2;
     this->FCS = this->Payload + PayloadSize;
-    this->IFGS = this->FCS + 4;
-    
+    this->IFGs = this->FCS + 4;
+   
+
+    copy(Preamble_SFD.begin(), Preamble_SFD.end(), Frame.begin());
     copy(DestMAC.begin(), DestMAC.end(), this->DestMAC);
     copy(SrcMAC.begin(), SrcMAC.end(), this->SrcMAC);
     copy(EtherType.begin(), EtherType.end(), this->EtherType);
@@ -42,7 +44,7 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
     
 
     CalculateFCS();
-    FillIFGS();
+    FillIFGs();
 
 }
 
@@ -54,10 +56,15 @@ EthernetFrame::~EthernetFrame()
 
 }
 
-
-void EthernetFrame::FillIFGS()
+void EthernetFrame::CalculateFCS()
 {
-    vector<uint8_t>::iterator i = IFGS;
+    
+}
+
+
+void EthernetFrame::FillIFGs()
+{
+    vector<uint8_t>::iterator i = IFGs;
     while(i != Frame.end())
     {
         *i = IFG;

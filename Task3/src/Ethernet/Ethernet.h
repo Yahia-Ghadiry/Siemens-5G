@@ -29,7 +29,7 @@ class EthernetFrame
         vector<uint8_t>::iterator Payload;
         int PayloadSize;
         vector<uint8_t>::iterator FCS;
-        vector<uint8_t>::iterator IFGS;
+        vector<uint8_t>::iterator IFGs;
 
 
         static const uint8_t IFG = 0x07;
@@ -38,8 +38,8 @@ class EthernetFrame
         
     public:
 
-
-    EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t> SrcMAC, const vector<uint8_t> EtherType, const vector<uint8_t> Payload, const int MinIFGS, const int MaxSize);
+    // TODO make a constructor for string inputs
+    EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t> SrcMAC, const array<uint8_t, 2> EtherType, const vector<uint8_t> Payload, const int MinIFGS, const int MaxSize);
 
 
     ~EthernetFrame();
@@ -47,7 +47,7 @@ class EthernetFrame
     private:
         
         void CalculateFCS();
-        void FillIFGS();
+        void FillIFGs();
     
 };
 

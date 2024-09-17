@@ -14,7 +14,7 @@ CFLAGS := -Wall
 .SECONDEXPANSION:
 
 all: $(OBJS) | $(BLD_DIR)/
-	$(CC) $(CFLAGS) $^ -o $(TARGET)
+	$(CC) $(CFLAGS) $^ -o $(TARGET).elf
 
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) | $(BLD_DIR)/$$(dir %)
 	@echo Building $< into $@
