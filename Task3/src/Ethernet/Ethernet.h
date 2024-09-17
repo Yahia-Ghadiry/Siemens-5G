@@ -15,12 +15,9 @@ class EthernetFrame
     
     public:
         
-        static constexpr array<uint8_t, 2> eCPRI_Type = {0xAE, 0xFE};
+        static constexpr array<uint8_t, 2> eCPRI_Type {0xAE, 0xFE};
             
     private:
-        
-        int MinIFGs;
-        int MaxSize;
         
         static const int HeadersSize = 22;
         static const int FCSSize = 4;

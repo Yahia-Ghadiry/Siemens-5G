@@ -1,9 +1,13 @@
 #include "Ethernet.h"
 #include <cstdint>
 #include <iomanip>
+#include <iterator>
 #include <stdexcept>
 #include <algorithm>
+#include <cmath>
 
+//tmp
+#include <iostream>
 using std::invalid_argument;
 using std::copy;
 
@@ -68,9 +72,36 @@ ostream &operator<<(ostream &os, const EthernetFrame &ethernetFrame)
 
 void EthernetFrame::CalculateFCS()
 {
+    // Calculating the size of FrameDivion, and shifting it if it isn't a multiple of 4
+    int offset = std::distance(DestMAC, IFGs) % 4;
+    int sizeFCSincluded = std::ceil(std::distance(DestMAC, IFGs) / 4.0);
     
-}
+    vector<uint32_t> FrameDivison(sizeFCSincluded);
+    vector<uint8_t>::iterator curByte = DestMAC - offset;
+    
+    for (uint32_t &Dword: FrameDivison)
+    {
+        Dword = ((*curByte) << 24) + (*(curByte + 1) << 16) + (*(curByte + 2) << 8) + *(curByte + 3);
+        curByte += 4;
+    }
+    
+    // removing preamble data goten from shift
+    FrameDivison[0] &= ~(0xFFFFFFFF << (4 - offset) * 8);
 
+
+    // tmp printng
+    std::cout << std::endl;
+    for (auto c: FrameDivison)
+    {
+
+        std::cout << std::setfill('0') << std::setw(8)<< std::uppercase <<std::hex << static_cast<int>(c) << std::endl;
+    }
+    std::cout << std::endl;
+    uint32_t CRC = 0xFFFFFFFF;
+    uint32_t Polynomial = 0x04C11DB7;
+
+
+}
 
 void EthernetFrame::FillIFGs()
 {
@@ -85,5 +116,4 @@ void EthernetFrame::FillIFGs()
 
 EthernetFrame::~EthernetFrame()
 {
-
 }
