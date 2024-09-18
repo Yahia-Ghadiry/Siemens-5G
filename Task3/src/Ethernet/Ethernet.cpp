@@ -76,10 +76,10 @@ void EthernetFrame::CalculateFCS()
 {
     // Calculating the size of FrameDivion, and shifting it if it isn't a multiple of 4
     int offset = std::distance(DestMAC, IFGs) % 4;
-    int sizeFCSincluded = std::ceil(std::distance(DestMAC, IFGs) / 4.0) + 1;
+    int sizeFCSincluded = std::ceil(std::distance(DestMAC, IFGs) / 4.0) ;
     
     vector<uint32_t> FrameDivison(sizeFCSincluded);
-    vector<uint8_t>::iterator curByte = DestMAC - offset- 4;
+    vector<uint8_t>::iterator curByte = DestMAC - offset;
     
     for (uint32_t &Dword: FrameDivison)
     {
@@ -88,12 +88,15 @@ void EthernetFrame::CalculateFCS()
     }
     
     // Removing preamble data goten from shift and adding startreg
-    FrameDivison[0] = 0x00000000; 
-    //FrameDivison[0] = 0xFFFFFFFF >> offset * 8;
     if (offset != 0)
     {
         FrameDivison[1] &= ~(0xFFFFFFFF << (4 - offset) * 8);
-    //    FrameDivison[1] |= (0xFFFFFFFF << (4 - offset) * 8);
+        FrameDivison[1] |= (0xFFFFFFFF << (4 - offset) * 8);
+    }
+    else
+    {
+
+        FrameDivison[0] ^= 0xFFFFFFFF;
     }
 
     // tmp printng
@@ -107,7 +110,8 @@ void EthernetFrame::CalculateFCS()
     uint32_t CRC = 0xFFFFFFFF;
     uint32_t Polynomial = 0x04C11DB7;
     //tmp
-    Polynomial = 0x814141AB;
+    //Polynomial = 0x814141AB;
+    
     //Polynomial = 0x8001801B;
     
     vector<uint32_t>::iterator curDWORD = FrameDivison.begin();
