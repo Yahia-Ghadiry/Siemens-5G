@@ -13,8 +13,9 @@ int main()
     
     int TestMaxSize = 1000;
     int TestMinIFGs = 3;
-    
-    vector<uint8_t> TestPayload(48, 0xFF);
+    //tmp
+    //vector<uint8_t> TestPayload(48, 0xFF);
+    vector<uint8_t> TestPayload(2, 0xFF);
 
     EthernetFrame TestFrame(TestDestMAC, TestSrcMAC, EthernetFrame::eCPRI_Type, TestPayload, TestMinIFGs, TestMaxSize);
     std::cout << TestFrame << std::endl; 

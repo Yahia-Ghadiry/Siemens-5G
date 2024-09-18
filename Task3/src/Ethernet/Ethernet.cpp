@@ -16,10 +16,11 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
 {
 
     PayloadSize = Payload.size();
-
+    
+    //tmp
     if(PayloadSize < 46)
     {
-       throw invalid_argument("Payload Size musn't be smaller than 46 bits"); 
+       //throw invalid_argument("Payload Size musn't be smaller than 46 bits"); 
     }
     else if (PayloadSize > (MaxSize - HeadersSize - FCSSize))
     {
@@ -75,10 +76,10 @@ void EthernetFrame::CalculateFCS()
 {
     // Calculating the size of FrameDivion, and shifting it if it isn't a multiple of 4
     int offset = std::distance(DestMAC, IFGs) % 4;
-    int sizeFCSincluded = std::ceil(std::distance(DestMAC, IFGs) / 4.0);
+    int sizeFCSincluded = std::ceil(std::distance(DestMAC, IFGs) / 4.0) + 1;
     
     vector<uint32_t> FrameDivison(sizeFCSincluded);
-    vector<uint8_t>::iterator curByte = DestMAC - offset;
+    vector<uint8_t>::iterator curByte = DestMAC - offset - 4;
     
     for (uint32_t &Dword: FrameDivison)
     {
@@ -86,9 +87,14 @@ void EthernetFrame::CalculateFCS()
         curByte += 4;
     }
     
-    // removing preamble data goten from shift
-    FrameDivison[0] &= ~(0xFFFFFFFF << (4 - offset) * 8);
-
+    // Removing preamble data goten from shift and adding startreg
+    FrameDivison[0] = 0x00000000; 
+    //FrameDivison[0] = 0xFFFFFFFF >> offset * 8;
+    if (offset != 0)
+    {
+        FrameDivison[1] &= ~(0xFFFFFFFF << (4 - offset) * 8);
+        //FrameDivison[1] |= (0xFFFFFFFF << (4 - offset) * 8);
+    }
 
     // tmp printng
     std::cout << std::endl;
@@ -100,6 +106,9 @@ void EthernetFrame::CalculateFCS()
     std::cout << std::endl;
     uint32_t CRC = 0xFFFFFFFF;
     uint32_t Polynomial = 0x04C11DB7;
+    //tmp
+    Polynomial = 0x814141AB;
+    //Polynomial = 0x8001801B;
     
     vector<uint32_t>::iterator curDWORD = FrameDivison.begin();
     vector<uint32_t>::iterator DivsionCRC = FrameDivison.end() - 1;
@@ -123,22 +132,42 @@ void EthernetFrame::CalculateFCS()
             continue;
         }
 
-        std::cout << firstBit << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << *curDWORD;
-        
+        std::cout << std::setw(2) <<firstBit << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << *curDWORD << ' ' << std::setfill('0') << std::setw(8) << *(curDWORD+1);
+        std:std::cout << std::endl;
+
         *curDWORD ^= Polynomial >> (firstBit + 1);
+        //tmp
         *curDWORD ^= 0x1 << (32 - (firstBit + 1));
         std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << *curDWORD;
-        std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << Polynomial;
+        std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << (Polynomial >> (firstBit+1));
+        
         *(curDWORD + 1) ^= Polynomial << (32 - (firstBit + 1));
+        std::cout << std::endl;
+        
+        std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << *(curDWORD + 1);
+        std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << (Polynomial << (32 - (firstBit+1)));
         std::cout << std::endl;
         for (auto c: FrameDivison)
         {
             std::cout << std::setfill('0') << std::setw(8)<< std::uppercase <<std::hex << static_cast<int>(c) << std::endl;
         }
+        std::cout << std::endl;
+        
         counter--;
-        if (counter == 0)
-            break;
+        //if (counter == 0)
+            //break;
     }
+
+
+    std::cout  << std::setfill('0') << std::setw(8)<< *(FrameDivison.end() -1) << std::endl;
+    *(FrameDivison.end() -1) ^= 0xFFFFFFFF;
+    std::cout  << std::setfill('0') << std::setw(8)<< *(FrameDivison.end() -1) << std::endl;
+    std::cout << std::endl;
+    for (auto c: FrameDivison)
+    {
+        std::cout << std::setfill('0') << std::setw(8)<< std::uppercase <<std::hex << static_cast<int>(c) << std::endl;
+    }
+    std::cout << std::endl;
 
 }
 
