@@ -6,9 +6,6 @@
 #include <algorithm>
 #include <cmath>
 
-//tmp
-#include <iostream>
-
 using std::invalid_argument;
 using std::copy;
 
@@ -79,7 +76,7 @@ void EthernetFrame::CalculateFCS()
     int sizeFCSincluded = std::ceil(std::distance(DestMAC, IFGs) / 4.0) ;
     
     vector<uint32_t> FrameDivison(sizeFCSincluded);
-    vector<uint8_t>::iterator curByte = DestMAC - offset;
+    vector<uint8_t>::iterator curByte = DestMAC - (4 - offset);
     
     for (uint32_t &Dword: FrameDivison)
     {
@@ -90,38 +87,23 @@ void EthernetFrame::CalculateFCS()
     // Removing preamble data goten from shift and adding startreg
     if (offset != 0)
     {
-        FrameDivison[1] &= ~(0xFFFFFFFF << (4 - offset) * 8);
-        FrameDivison[1] |= (0xFFFFFFFF << (4 - offset) * 8);
+        FrameDivison[0] &= ~(0xFFFFFFFF << offset * 8);
+        FrameDivison[0] ^= (0xFFFFFFFF >> (4 - offset) * 8);
+        FrameDivison[1] ^= (0xFFFFFFFF << offset * 8);
     }
     else
     {
-
         FrameDivison[0] ^= 0xFFFFFFFF;
     }
 
-    // tmp printng
-    std::cout << std::endl;
-    for (auto c: FrameDivison)
-    {
-
-        std::cout << std::setfill('0') << std::setw(8)<< std::uppercase <<std::hex << static_cast<int>(c) << std::endl;
-    }
-    std::cout << std::endl;
-    uint32_t CRC = 0xFFFFFFFF;
+    uint32_t FCS;
     uint32_t Polynomial = 0x04C11DB7;
-    //tmp
-    //Polynomial = 0x814141AB;
-    
-    //Polynomial = 0x8001801B;
     
     vector<uint32_t>::iterator curDWORD = FrameDivison.begin();
-    vector<uint32_t>::iterator DivsionCRC = FrameDivison.end() - 1;
 
-    int counter = 3000;
     while(curDWORD != FrameDivison.end() - 1)
     {
 
-        
         if (*curDWORD == 0)
         {
             curDWORD++;
@@ -137,45 +119,20 @@ void EthernetFrame::CalculateFCS()
             continue;
         }
 
-        std::cout << std::setw(2) <<firstBit << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << *curDWORD << ' ' << std::setfill('0') << std::setw(8) << *(curDWORD+1);
-        std:std::cout << std::endl;
-
         *curDWORD ^= Polynomial >> (firstBit + 1);
-        //tmp
         *curDWORD ^= 0x1 << (32 - (firstBit + 1));
-//       std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << *curDWORD;
-//        std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << (Polynomial >> (firstBit+1));
         
         *(curDWORD + 1) ^= Polynomial << (32 - (firstBit + 1));
-/*        std::cout << std::endl;
-        
-        std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << *(curDWORD + 1);
-        std::cout << ' ' << std::setfill('0')<<std::setw(8)<< std::hex << (Polynomial << (32 - (firstBit+1)));
-        std::cout << std::endl;
-        for (auto c: FrameDivison)
-        {
-            std::cout << std::setfill('0') << std::setw(8)<< std::uppercase <<std::hex << static_cast<int>(c) << std::endl;
-        }
-        std::cout << std::endl;
-      */  
-        counter--;
-        if (counter == 0)
-            break;
-
     }
 
 
-    std::cout  << std::setfill('0') << std::setw(8)<< *(FrameDivison.end() -1) << std::endl;
-    *(FrameDivison.end() -1) ^= 0xFFFFFFFF;
-    std::cout  << std::setfill('0') << std::setw(8)<< *(FrameDivison.end() -1) << std::endl;
-    std::cout << std::endl;
-/*
-    for (auto c: FrameDivison)
+    FCS = *(FrameDivison.end() -1) ^ 0xFFFFFFFF;
+    
+    for (int i = 0; i < 4; i++)
     {
-        std::cout << std::setfill('0') << std::setw(8)<< std::uppercase <<std::hex << static_cast<int>(c) << std::endl;
+        *(this->FCS + i) = ((0xFF000000 >> i * 8) & FCS) >> (3 - i) * 8;
+        
     }
-    std::cout << std::endl;
- */
 }
 
 void EthernetFrame::FillIFGs()
