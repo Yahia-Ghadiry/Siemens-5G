@@ -32,7 +32,7 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> &DestMAC, const vector<uint8_
     
     int FrameSize = HeadersSize + PayloadSize + FCSSize + MinIFGs;
    
-    FrameSize += 4 - FrameSize % 4;
+    FrameSize += 4 - (FrameSize % 4);
 
     Frame = vector<uint8_t>(FrameSize);  
     
@@ -93,7 +93,7 @@ void EthernetFrame::SetPayload(const std::vector<uint8_t> &Payload)
         
     int FrameSize = HeadersSize + PayloadSize + FCSSize + MinIFGs;
    
-    FrameSize += 4 - FrameSize % 4;
+    FrameSize += 4 - (FrameSize % 4);
 
     Frame.resize(FrameSize);  
     

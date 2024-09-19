@@ -44,7 +44,7 @@ EthernetOptions::EthernetOptions(const string &FileName)
             EthernetMemberValue.erase(EthernetMemberValue.find_last_not_of('\r') + 1);
             
             if (EthernetMember == "LineRate")
-                Linerate_GBs = stoi(EthernetMemberValue);
+                Linerate_Gbs = stoi(EthernetMemberValue);
             else if (EthernetMember == "CaptureSizeMs")
                 CaptureSize_ms = stoi(EthernetMemberValue);
             else if (EthernetMember == "MinNumOfIFGsPerPacket")

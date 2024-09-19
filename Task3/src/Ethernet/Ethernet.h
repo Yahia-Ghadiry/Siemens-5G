@@ -15,6 +15,7 @@ class EthernetFrame
     public:
         
         static constexpr std::array<uint8_t, 2> eCPRI_Type {0xAE, 0xFE};
+        static const uint8_t IFG = 0x07;
             
     private:
         
@@ -34,7 +35,6 @@ class EthernetFrame
         std::vector<uint8_t>::iterator IFGs;
 
 
-        static const uint8_t IFG = 0x07;
 
         std::vector<uint8_t> Frame;
         
@@ -45,6 +45,7 @@ class EthernetFrame
         
         void SetPayload(const std::vector<uint8_t> &Payload);  
 
+        // TODO Need more setters and getters 
 
         ~EthernetFrame();
 
@@ -60,7 +61,7 @@ class EthernetFrame
 
 struct EthernetOptions
 {
-    int Linerate_GBs;
+    int Linerate_Gbs;
     int CaptureSize_ms;
     int MinIFGsPerPacket;
     std::string DestMAC;
