@@ -11,10 +11,6 @@ using std::to_string;
 using std::stoi;
 using std::min;
 
-//tmp
-#include <iostream>
-
-
 bool CheckLineEmpty(const string &line);
 
 EthernetOptions::EthernetOptions(const string &FileName)
@@ -67,7 +63,6 @@ EthernetOptions::EthernetOptions(const string &FileName)
         // Checks if line doesn't start with a commant or isn't emptpy
         else if (line.find("//") != 0 && !CheckLineEmpty(line))
         {
-            std::cout << (int)line[0] << std::endl;
             throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must start with option or comment // \n Line is :" + line);
         }
         
@@ -76,6 +71,23 @@ EthernetOptions::EthernetOptions(const string &FileName)
     EthernetType = EthernetFrame::eCPRI_Type; 
     
     ConfigFile.close();
+}
+
+int EthernetOptions::CalcTotalBursts()
+{
+    int ToatalNumBursts = (CaptureSize_ms * 1000) / BurstPeriodicity_us;
+    return ToatalNumBursts;
+}
+
+int EthernetOptions::CalcTotalIFGsPerBurst()
+{
+    int BurstsSize_b = BurstSize * MaxPacketSize * 8;
+    float BurstsTime_us = (float) BurstsSize_b / (Linerate_Gbs * 1000);
+    float IFGsTime_us = BurstPeriodicity_us - BurstsTime_us;
+    int NumIFGsPerBurst = (IFGsTime_us * Linerate_Gbs * 1000) / 8;
+    NumIFGsPerBurst += 4 - NumIFGsPerBurst % 4;
+    return NumIFGsPerBurst;
+
 }
 
 EthernetOptions::~EthernetOptions()

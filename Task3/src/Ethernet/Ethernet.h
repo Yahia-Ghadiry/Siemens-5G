@@ -34,8 +34,6 @@ class EthernetFrame
         std::vector<uint8_t>::iterator FCS;
         std::vector<uint8_t>::iterator IFGs;
 
-
-
         std::vector<uint8_t> Frame;
         
     public:
@@ -73,6 +71,9 @@ struct EthernetOptions
 
     EthernetOptions(const std::string &FileName);
     
+    int CalcTotalBursts();
+    int CalcTotalIFGsPerBurst();
+
     ~EthernetOptions();
 };
 
