@@ -87,7 +87,29 @@ EthernetFrame::EthernetFrame(const EthernetOptions &FrameConfigrations)
     copy(FrameConfigrations.EthernetType.begin(), FrameConfigrations.EthernetType.end(), EtherType);
 }
 
+void EthernetFrame::SetPayload(const std::vector<uint8_t> &Payload)
+{
+    PayloadSize = Payload.size();
+        
+    int FrameSize = HeadersSize + PayloadSize + FCSSize + MinIFGs;
+   
+    FrameSize += 4 - FrameSize % 4;
 
+    Frame.resize(FrameSize);  
+    
+    this->DestMAC = Frame.begin() + 8;
+    this->SrcMAC = this->DestMAC + 6;
+    this->EtherType = this->SrcMAC + 6;
+    this->Payload = this->EtherType + 2;
+    this->FCS = this->Payload + PayloadSize;
+    this->IFGs = this->FCS + 4;
+   
+
+    copy(Payload.begin(), Payload.end(), this->Payload);
+    
+    CalculateFCS();
+    FillIFGs();
+}
 
 void EthernetFrame::CalculateFCS()
 {
