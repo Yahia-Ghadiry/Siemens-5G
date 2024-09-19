@@ -1,6 +1,7 @@
 #include "Ethernet.h"
 #include <cstdint>
 #include <iomanip>
+#include <ios>
 #include <iterator>
 #include <stdexcept>
 #include <algorithm>
@@ -59,7 +60,7 @@ ostream &operator<<(ostream &os, const EthernetFrame &ethernetFrame)
     
     for (const uint8_t &byte: ethernetFrame.Frame)
     {
-        os << std::setfill('0') << std::setw(2)<< std::uppercase <<std::hex << static_cast<int>(byte);
+        os << std::setfill('0') << std::setw(2) << std::uppercase << std::hex << static_cast<int>(byte);
         ByteNo++;
         ByteNo %= 4;
         if (ByteNo == 0)
@@ -67,6 +68,10 @@ ostream &operator<<(ostream &os, const EthernetFrame &ethernetFrame)
             os << std::endl;
         }
     }
+
+    // Restoring defaults
+    os << std::setfill(' ') << std::setw(0) << std::nouppercase << std::dec;
+    
     return os;
 }
 
