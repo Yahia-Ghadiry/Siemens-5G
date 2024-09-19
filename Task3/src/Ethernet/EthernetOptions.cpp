@@ -8,6 +8,7 @@ using std::string;
 using std::ifstream;
 using std::invalid_argument;
 using std::to_string;
+using std::stoi;
 using std::min;
 
 //tmp
@@ -42,13 +43,25 @@ EthernetOptions::EthernetOptions(const string &FileName)
             EthernetMemberValue.erase(EthernetMemberValue.find_last_not_of('\n') + 1);
             EthernetMemberValue.erase(EthernetMemberValue.find_last_not_of('\r') + 1);
             
-            std::cout << EthernetMember << EthernetMemberValue<< 'a'<< std::endl;
             if (EthernetMember == "LineRate")
-            {}
+                Linerate_GBs = stoi(EthernetMemberValue);
             else if (EthernetMember == "CaptureSizeMs")
-            {}
+                CaptureSize_ms = stoi(EthernetMemberValue);
+            else if (EthernetMember == "MinNumOfIFGsPerPacket")
+                MinIFGsPerPacket = stoi(EthernetMemberValue);
+            else if (EthernetMember == "DestAddress")
+                DestMAC = EthernetMemberValue;
+            else if (EthernetMember == "SourceAddress")
+                SrcMAC = EthernetMemberValue;
+            else if (EthernetMember == "MaxPacketSize")
+                MaxPacketSize = stoi(EthernetMemberValue);
+            else if (EthernetMember == "BurstSize")
+                BurstSize = stoi(EthernetMemberValue);
+            else if (EthernetMember == "BurstPeriodicity_us")
+                BurstPeriodicity_us = stoi(EthernetMemberValue);
             else
-            {}
+                throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must Option for Eth. Not found // \n Line is :" + line + "\nOptions is: " + EthernetMember);
+            
         }
         // Checks if line doesn't start with a commant or isn't emptpy
         else if (line.find("//") != 0 && !CheckLineEmpty(line))
