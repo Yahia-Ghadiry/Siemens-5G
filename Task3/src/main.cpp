@@ -5,11 +5,12 @@
 #include <stdexcept>
 #include <cmath>
 #include <iomanip>
-#include <random>
 #include <algorithm>
+#include <fstream>
 
 using std::vector;
 using std::invalid_argument;
+using std::ofstream;
 
 int main(int argc, const char * argv[])
 {
@@ -18,7 +19,8 @@ int main(int argc, const char * argv[])
 
 
     EthernetOptions ethernetOptions(argv[1]);
-    
+    ofstream OuputFile(argv[2]);
+
 
     int TotalNumBursts = ethernetOptions.CalcTotalBursts();
     int NumIFGsPerBurst = ethernetOptions.CalcTotalIFGsPerBurst();
@@ -33,16 +35,14 @@ int main(int argc, const char * argv[])
             EthernetFrame ethernetFrame(ethernetOptions);
             ethernetFrame.SetPayload(DummyPayload);
             
-            std::cout << ethernetFrame; 
+            OuputFile << ethernetFrame; 
         }
         for (int j = 0; j < NumIFGsPerBurst; j++)
         {
 
-            std::cout << std::setfill('0') << std::setw(2) << std::hex << EthernetFrame::IFG;
+            OuputFile << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(EthernetFrame::IFG);
             if (j % 4 ==3)
-            {
-                std::cout << std::endl;
-            }
+                OuputFile << std::endl;
         }
     }
 

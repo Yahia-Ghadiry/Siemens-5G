@@ -16,6 +16,9 @@ bool CheckLineEmpty(const string &line);
 EthernetOptions::EthernetOptions(const string &FileName)
 {
     ifstream ConfigFile(FileName);
+    if (ConfigFile.fail())
+        throw invalid_argument("File :" + FileName + " Doesn't exist, Please input the correct file name.");
+
     string line;
     
     int LineNo = 0;
@@ -62,9 +65,7 @@ EthernetOptions::EthernetOptions(const string &FileName)
 
         // Checks if line doesn't start with a commant or isn't emptpy
         else if (line.find("//") != 0 && !CheckLineEmpty(line))
-        {
             throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must start with option or comment // \n Line is :" + line);
-        }
         
     }
 
@@ -87,7 +88,6 @@ int EthernetOptions::CalcTotalIFGsPerBurst()
     int NumIFGsPerBurst = (IFGsTime_us * Linerate_Gbs * 1000) / 8;
     NumIFGsPerBurst += 4 - NumIFGsPerBurst % 4;
     return NumIFGsPerBurst;
-
 }
 
 EthernetOptions::~EthernetOptions()

@@ -21,13 +21,9 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> &DestMAC, const vector<uint8_
     PayloadSize = Payload.size();
     
     if(PayloadSize < 46)
-    {
        throw invalid_argument("Payload Size musn't be smaller than 46 bits"); 
-    }
     else if (PayloadSize > (MaxSize - HeadersSize - FCSSize))
-    {
        throw invalid_argument("Payload Size musn't be larger than MaxSize - HeadersSize - FCSSize"); 
-    }
 
     
     int FrameSize = HeadersSize + PayloadSize + FCSSize + MinIFGs;
