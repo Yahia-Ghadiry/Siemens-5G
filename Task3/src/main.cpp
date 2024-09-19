@@ -29,8 +29,9 @@ int main(int argc, const char * argv[])
     {
         for (int j = 0; j < ethernetOptions.BurstSize; j++)
         {
-            vector<uint8_t> DummyPayload(ethernetOptions.MaxPacketSize);
-            std::generate(DummyPayload.begin(), DummyPayload.end(), std::rand);
+            vector<uint8_t> DummyPayload(ethernetOptions.MaxPacketSize, 0x00);
+            // If we want to fill the vector with random data
+            //std::generate(DummyPayload.begin(), DummyPayload.end(), std::rand);
 
             EthernetFrame ethernetFrame(ethernetOptions);
             ethernetFrame.SetPayload(DummyPayload);
