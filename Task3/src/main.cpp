@@ -21,7 +21,7 @@ int main(int argc, const char * argv[])
     vector<uint8_t> TestPayload(48, 0xFF);
 
     EthernetFrame TestFrame(TestDestMAC, TestSrcMAC, EthernetFrame::eCPRI_Type, TestPayload, TestMinIFGs, TestMaxSize);
-    std::cout << TestFrame << std::endl; 
+    //std::cout << TestFrame << std::endl; 
 
 
     EthernetOptions ethernetOptions(argv[1]);
