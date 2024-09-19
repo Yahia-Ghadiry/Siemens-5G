@@ -63,7 +63,7 @@ struct EthernetOptions
     int BurstSize;
     int BurstPeriodicity_us;
 
-    EthernetOptions(std::string FileName);
+    EthernetOptions(const std::string &FileName);
     
     ~EthernetOptions();
 };
