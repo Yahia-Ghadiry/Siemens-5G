@@ -12,8 +12,10 @@ using std::array;
 using std::ostream;
 using std::invalid_argument;
 using std::copy;
+using std::stoi;
 
 EthernetFrame::EthernetFrame(const vector<uint8_t> &DestMAC, const vector<uint8_t> &SrcMAC, const array<uint8_t, 2> &EtherType, const vector<uint8_t> &Payload, const int &MinIFGs, const int &MaxSize)
+    : MinIFGs(MinIFGs), MaxSize(MaxSize)
 {
 
     PayloadSize = Payload.size();
@@ -54,26 +56,37 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> &DestMAC, const vector<uint8_
 
 }
 
-ostream &operator<<(ostream &os, const EthernetFrame &ethernetFrame)
+EthernetFrame::EthernetFrame(const EthernetOptions &FrameConfigrations)
 {
-    int ByteNo = 0;
+    MinIFGs = FrameConfigrations.MinIFGsPerPacket;
+    MaxSize = FrameConfigrations.MaxPacketSize;
+   
     
-    for (const uint8_t &byte: ethernetFrame.Frame)
+    vector<uint8_t> DestMAC(6);
+    vector<uint8_t> SrcMAC(6);
+    
+    for (int i = 2; i < 14; i += 2)
     {
-        os << std::setfill('0') << std::setw(2) << std::uppercase << std::hex << static_cast<int>(byte);
-        ByteNo++;
-        ByteNo %= 4;
-        if (ByteNo == 0)
-        {
-            os << std::endl;
-        }
+        DestMAC[i/2] = stoi(FrameConfigrations.DestMAC.substr(i, 2));
+        SrcMAC[i/2] = stoi(FrameConfigrations.SrcMAC.substr(i, 2));
     }
 
-    // Restoring defaults
-    os << std::setfill(' ') << std::setw(0) << std::nouppercase << std::dec;
+    int FrameSize = HeadersSize;
+
+    Frame = vector<uint8_t>(FrameSize);  
     
-    return os;
+
+    this->DestMAC = Frame.begin() + 8;
+    this->SrcMAC = this->DestMAC + 6;
+    EtherType = this->SrcMAC + 6;
+    
+    
+    copy(Preamble_SFD.begin(), Preamble_SFD.end(), Frame.begin());
+    copy(DestMAC.begin(), DestMAC.end(), this->DestMAC);
+    copy(SrcMAC.begin(), SrcMAC.end(), this->SrcMAC);
+    copy(FrameConfigrations.EthernetType.begin(), FrameConfigrations.EthernetType.end(), EtherType);
 }
+
 
 
 void EthernetFrame::CalculateFCS()
@@ -155,4 +168,27 @@ void EthernetFrame::FillIFGs()
 
 EthernetFrame::~EthernetFrame()
 {
+}
+
+
+
+ostream &operator<<(ostream &os, const EthernetFrame &ethernetFrame)
+{
+    int ByteNo = 0;
+    
+    for (const uint8_t &byte: ethernetFrame.Frame)
+    {
+        os << std::setfill('0') << std::setw(2) << std::uppercase << std::hex << static_cast<int>(byte);
+        ByteNo++;
+        ByteNo %= 4;
+        if (ByteNo == 0)
+        {
+            os << std::endl;
+        }
+    }
+
+    // Restoring defaults
+    os << std::setfill(' ') << std::setw(0) << std::nouppercase << std::dec;
+    
+    return os;
 }

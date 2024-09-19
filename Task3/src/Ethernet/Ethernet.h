@@ -21,6 +21,9 @@ class EthernetFrame
         static const int HeadersSize = 22;
         static const int FCSSize = 4;
 
+        int MinIFGs;
+        int MaxSize; 
+
         static constexpr std::array<uint8_t, 8> Preamble_SFD {0xfb, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0xD5};
         std::vector<uint8_t>::iterator DestMAC;
         std::vector<uint8_t>::iterator SrcMAC;
@@ -40,10 +43,13 @@ class EthernetFrame
         EthernetFrame(const std::vector<uint8_t> &DestMAC, const std::vector<uint8_t> &SrcMAC, const std::array<uint8_t, 2> &EtherType, const std::vector<uint8_t> &Payload, const int &MinIFGS, const int &MaxSize);
         EthernetFrame(const EthernetOptions &FrameConfigrations);
         
-        friend std::ostream &operator<<(std::ostream &os, const EthernetFrame &EthernetFrame);   
+        void SetPayload(const std::vector<uint8_t> &Payload);  
 
 
         ~EthernetFrame();
+
+        friend std::ostream &operator<<(std::ostream &os, const EthernetFrame &EthernetFrame);   
+
 
     private:
         
@@ -62,6 +68,7 @@ struct EthernetOptions
     int MaxPacketSize;
     int BurstSize;
     int BurstPeriodicity_us;
+    std::array<uint8_t, 2> EthernetType;
 
     EthernetOptions(const std::string &FileName);
     

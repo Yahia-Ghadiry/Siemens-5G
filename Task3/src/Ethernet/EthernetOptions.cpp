@@ -63,6 +63,7 @@ EthernetOptions::EthernetOptions(const string &FileName)
                 throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must Option for Eth. Not found // \n Line is :" + line + "\nOptions is: " + EthernetMember);
             
         }
+
         // Checks if line doesn't start with a commant or isn't emptpy
         else if (line.find("//") != 0 && !CheckLineEmpty(line))
         {
@@ -71,7 +72,9 @@ EthernetOptions::EthernetOptions(const string &FileName)
         }
         
     }
- 
+
+    EthernetType = EthernetFrame::eCPRI_Type; 
+    
     ConfigFile.close();
 }
 
