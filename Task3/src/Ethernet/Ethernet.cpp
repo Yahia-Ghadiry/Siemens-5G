@@ -6,14 +6,13 @@
 #include <algorithm>
 #include <cmath>
 
-
 using std::vector;
 using std::array;
 using std::ostream;
 using std::invalid_argument;
 using std::copy;
 
-EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t> SrcMAC, const array<uint8_t, 2> EtherType, const vector<uint8_t> Payload, const int MinIFGs, const int MaxSize)
+EthernetFrame::EthernetFrame(const vector<uint8_t> &DestMAC, const vector<uint8_t> &SrcMAC, const array<uint8_t, 2> &EtherType, const vector<uint8_t> &Payload, const int &MinIFGs, const int &MaxSize)
 {
 
     PayloadSize = Payload.size();

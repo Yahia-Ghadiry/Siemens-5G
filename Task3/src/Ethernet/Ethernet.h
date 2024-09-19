@@ -3,9 +3,11 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 #include <array>
 #include <ostream>
 
+struct EthernetOptions;
 
 class EthernetFrame
 {       
@@ -35,7 +37,8 @@ class EthernetFrame
         
     public:
         
-        EthernetFrame(const std::vector<uint8_t> DestMAC, const std::vector<uint8_t> SrcMAC, const std::array<uint8_t, 2> EtherType, const std::vector<uint8_t> Payload, const int MinIFGS, const int MaxSize);
+        EthernetFrame(const std::vector<uint8_t> &DestMAC, const std::vector<uint8_t> &SrcMAC, const std::array<uint8_t, 2> &EtherType, const std::vector<uint8_t> &Payload, const int &MinIFGS, const int &MaxSize);
+        EthernetFrame(const EthernetOptions &FrameConfigrations);
         
         friend std::ostream &operator<<(std::ostream &os, const EthernetFrame &EthernetFrame);   
 
@@ -49,6 +52,21 @@ class EthernetFrame
     
 };
 
+struct EthernetOptions
+{
+    int Linerate_GBs;
+    int CaptureSize_ms;
+    int MinIFGsPerPacket;
+    std::string DestMAC;
+    std::string SrcMAC;
+    int MaxPacketSize;
+    int BurstSize;
+    int BurstPeriodicity_us;
+
+    EthernetOptions(std::string FileName);
+    
+    ~EthernetOptions();
+};
 
 
 #endif
