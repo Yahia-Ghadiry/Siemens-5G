@@ -6,6 +6,10 @@
 #include <algorithm>
 #include <cmath>
 
+
+using std::vector;
+using std::array;
+using std::ostream;
 using std::invalid_argument;
 using std::copy;
 
@@ -14,10 +18,9 @@ EthernetFrame::EthernetFrame(const vector<uint8_t> DestMAC, const vector<uint8_t
 
     PayloadSize = Payload.size();
     
-    //tmp
     if(PayloadSize < 46)
     {
-       //throw invalid_argument("Payload Size musn't be smaller than 46 bits"); 
+       throw invalid_argument("Payload Size musn't be smaller than 46 bits"); 
     }
     else if (PayloadSize > (MaxSize - HeadersSize - FCSSize))
     {
