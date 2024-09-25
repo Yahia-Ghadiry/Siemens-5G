@@ -69,7 +69,7 @@ EthernetOptions::EthernetOptions(const string &FileName)
         
     }
 
-    EthernetType = EthernetFrame::eCPRI_Type; 
+    EthernetType = EthernetFrame::EtherType_eCPRI; 
     
     ConfigFile.close();
 }

@@ -14,7 +14,7 @@ class EthernetFrame
     
     public:
         
-        static constexpr std::array<uint8_t, 2> eCPRI_Type {0xAE, 0xFE};
+        static constexpr std::array<uint8_t, 2> EtherType_eCPRI {0xAE, 0xFE};
         static const uint8_t IFG = 0x07;
             
     private:

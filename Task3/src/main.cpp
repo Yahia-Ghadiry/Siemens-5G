@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <cmath>
 #include <iomanip>
-#include <algorithm>
 #include <fstream>
 
 using std::vector;
