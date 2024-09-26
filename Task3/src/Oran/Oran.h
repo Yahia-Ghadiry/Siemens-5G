@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <array>
 #include <vector>
-
+#include <utility>
 
 class OranPacket
 {
@@ -23,9 +23,11 @@ class OranPacket
         std::vector<uint8_t>::iterator eCPRI_RTC;
         std::vector<uint8_t>::iterator eCPRISeqID;
 
+        // Oran
+        static const int OranHeadersSize = 8;
         
         std::vector<uint8_t>::iterator OranDirection_Version_fIndex;
-        std::vector<uint8_t>::iterator FramID;
+        std::vector<uint8_t>::iterator FrameID;
         std::vector<uint8_t>::iterator SubFrameID_SlotIDp1;
         std::vector<uint8_t>::iterator SlotIDp2_SymbolID;
         
@@ -47,7 +49,7 @@ class OranPacket
     
     public:
         
-        OranPacket();
+        OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SympolID, const uint16_t &PRBStart,const std::vector<std::pair<int8_t, uint8_t>> &IQSamples);
 
         
 
