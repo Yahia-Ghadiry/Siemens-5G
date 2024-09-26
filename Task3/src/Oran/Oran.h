@@ -16,6 +16,7 @@ class OranPacket
     
         // eCPRI Header
         static const int eCPRIHeaderSize = 8;
+
         std::vector<uint8_t>::iterator eCPRIVersion_Contacation;
         std::vector<uint8_t>::iterator eCPRIMessageType;
         std::vector<uint8_t>::iterator eCPRIPayloadSize;
@@ -27,6 +28,9 @@ class OranPacket
         std::vector<uint8_t>::iterator FramID;
         std::vector<uint8_t>::iterator SubFrameID_SlotIDp1;
         std::vector<uint8_t>::iterator SlotIDp2_SymbolID;
+        
+        // SectionID is 4095 as specificed. rb is 0 for concurrent RBs , symlc is 0 to not increment SymbolNum.
+        static constexpr std::array<uint8_t, 2> SectionID_rb_symlc_Configuration {0xFF, 0xF0};
 
         std::vector<uint8_t>::iterator SectionIDp1;
         std::vector<uint8_t>::iterator SectionIDp2_rb_symlc_StartPRBUp1;
@@ -34,6 +38,8 @@ class OranPacket
         std::vector<uint8_t>::iterator NumPRBUp;
         
 
+
+        // TODO Make sure negative samples don't cause error
         std::vector<uint8_t>::iterator IQSamples;
 
 
