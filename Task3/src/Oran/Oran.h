@@ -4,7 +4,10 @@
 #include <cstdint>
 #include <array>
 #include <vector>
+#include <string>
 #include <utility>
+
+struct OranOptions;
 
 class OranPacket
 {
@@ -39,17 +42,14 @@ class OranPacket
         std::vector<uint8_t>::iterator StartPRBUp2;
         std::vector<uint8_t>::iterator NumPRBUp;
         
-
-
-        // TODO Make sure negative samples don't cause error
         std::vector<uint8_t>::iterator IQSamples;
-
 
         std::vector<uint8_t> Payload;
     
     public:
         
         OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SympolID, const uint16_t &PRBStart, const std::vector<std::pair<int8_t, int8_t>> &IQSamples);
+        OranPacket(const OranOptions &PacketInforamtion, const std::vector<std::pair<int8_t, int8_t>> &IQSamples);
 
         
 
@@ -57,6 +57,32 @@ class OranPacket
     
     private:
         void FillIQ(const std::vector<std::pair<int8_t, int8_t>> &IQSamples);
+};
+
+struct OranOptions
+{
+    int SCS_kHz;
+    int MaxRBs;
+    int nRBPerPacket;
+    std::string PayloadType;
+    std::string PayloadFile;
+    
+    
+    // Current Packet Configuration
+    uint8_t SeqID;
+    uint8_t FrameID;
+    uint8_t SubFrameID;
+    uint8_t SlotID; 
+    uint8_t SympolID;
+    uint16_t PRBStart;
+
+    OranOptions(const std::string &FileName);
+
+    OranPacket GetPacket();
+
+    ~OranOptions();
+
+
 };
 
 #endif
