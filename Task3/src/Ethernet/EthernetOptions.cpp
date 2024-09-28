@@ -11,7 +11,7 @@ using std::to_string;
 using std::stoi;
 using std::min;
 
-bool CheckLineEmpty(const string &line);
+bool CheckLineEmptyEth(const string &line);
 
 EthernetOptions::EthernetOptions(const string &FileName)
 {
@@ -64,7 +64,7 @@ EthernetOptions::EthernetOptions(const string &FileName)
         }
         else if (line.substr(0, line.find('.')) == "Oran"); // Ignore Oran options
         // Checks if line doesn't start with a commant or isn't emptpy
-        else if (line.find("//") != 0 && !CheckLineEmpty(line))
+        else if (line.find("//") != 0 && !CheckLineEmptyEth(line))
             throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must start with option or comment // \n Line is :" + line);
         
     }
@@ -95,7 +95,7 @@ EthernetOptions::~EthernetOptions()
 }
 
 
-bool CheckLineEmpty(const string &line)
+bool CheckLineEmptyEth(const string &line)
 {
     for (const char &c: line)
     {

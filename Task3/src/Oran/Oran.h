@@ -51,7 +51,7 @@ class OranPacket
         OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SympolID, const uint16_t &PRBStart, const std::vector<std::pair<int8_t, int8_t>> &IQSamples);
         OranPacket(const OranOptions &PacketInforamtion, const std::vector<std::pair<int8_t, int8_t>> &IQSamples);
 
-        
+        std::vector<uint8_t>& GetPayload() const; // TODO
 
         ~OranPacket();
     
@@ -77,8 +77,11 @@ struct OranOptions
     uint16_t PRBStart;
 
     OranOptions(const std::string &FileName);
-
-    OranPacket GetPacket();
+    
+    void CheckConfiguration(); // TODO
+    OranPacket GetPacket(); // TODO
+    
+    // Make MoreOptions than GetPacket
 
     ~OranOptions();
 
