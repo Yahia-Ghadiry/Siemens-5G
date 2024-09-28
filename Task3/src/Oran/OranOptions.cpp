@@ -1,8 +1,11 @@
 #include "Oran.h"
 
+#include <cstdint>
 #include <stdexcept>
+#include <algorithm>
 
-
+using std::vector;
+using std::pair;
 using std::string;
 using std::ifstream;
 using std::invalid_argument;
@@ -11,6 +14,7 @@ using std::stoi;
 using std::min;
 
 bool CheckLineEmptyOran(const string &line);
+pair<int8_t, int8_t> RandPair();
 
 OranOptions::OranOptions(const string &FileName)
 {
@@ -46,15 +50,16 @@ OranOptions::OranOptions(const string &FileName)
             if (OranMember == "SCS")
                 SCS_kHz = stoi(OranMemberValue);
             else if (OranMember == "MaxMrb")
-                MaxRBs = stoi(OranMemberValue);
+                MaxRBs = stoi(OranMemberValue) == 273 ? 0 : stoi(OranMemberValue);
             else if (OranMember == "NrbPerPacket")
-                nRBPerPacket = stoi(OranMemberValue);
+                nRBPerPacket = stoi(OranMemberValue) == 273 ? 0 : stoi(OranMemberValue);
             else if (OranMember == "PayloadType")
                 PayloadType = OranMemberValue;
             else if (OranMember == "Payload")
             {
-                string IQSamplesFileName = OranMemberValue;
-                IQSamplesFile = ifstream(IQSamplesFileName);
+                IQSamplesFile = ifstream(OranMemberValue);
+                if (IQSamplesFile.fail())
+                    throw invalid_argument("File :" + FileName + " Doesn't exist, Please input the correct file name.");
             }
             else
                 throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must Option for Oran. Not found // \n Line is :" + line + "\nOptions is: " + OranMember);
@@ -68,6 +73,9 @@ OranOptions::OranOptions(const string &FileName)
     }
 
     ConfigFile.close();
+
+    if (PayloadType != "Random" && PayloadType != "Fixed")
+        throw invalid_argument("Oran.PayloadType Needs to be either Random or Fixed");
 
 
     if (SCS_kHz % 15 != 0 || __builtin_ctz(SCS_kHz / 15) + __builtin_clz(SCS_kHz / 15) != 31) // Fast way to check if power of 2
@@ -83,8 +91,48 @@ OranOptions::OranOptions(const string &FileName)
 }
 
 
+OranPacket OranOptions::GetPacket()
+{
+    vector<pair<int8_t, int8_t>> IQSamples(nRBPerPacket * 12);
+    if (PayloadType == "Random")
+        std::generate(IQSamples.begin(), IQSamples.end(), RandPair);
+    else if (PayloadType == "Fixed")
+    {
+        string line;
+        pair<int8_t, int8_t> IQSample;
+            
+        for(int i = 0; i < nRBPerPacket * 12; i++)
+        {
+            if(getline(IQSamplesFile, line))
+            {
+                IQSample.first = stoi(line.substr(0, line.find(' ')));
+                IQSample.second = stoi(line.substr(line.find(' ') + 1));
+                IQSamples[i] = IQSample;
+            }
+            else // if file is at end loop to begining
+            {
+                IQSamplesFile.clear();
+                IQSamplesFile.seekg(0, std::ios::beg);
+                i--; // don't count this iteration
+            }
+            
+
+        }
+    }
+    OranPacket Packet(*this, IQSamples);
+
+    return Packet;
+}
+
+
 OranOptions::~OranOptions()
 {
+    IQSamplesFile.close();
+}
+
+pair<int8_t, int8_t> RandPair()
+{
+    return pair<int8_t, int8_t>(std::rand(), std::rand());
 }
 
 bool CheckLineEmptyOran(const string &line)

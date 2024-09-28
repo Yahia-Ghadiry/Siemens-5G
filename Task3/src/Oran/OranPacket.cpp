@@ -11,13 +11,10 @@ using std::invalid_argument;
 OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SymbolID, const uint16_t &PRBStart, const vector<pair<int8_t, int8_t>> &IQSamples)
 {
 
-    
     uint8_t NumPRBs = IQSamples.size() / 12;
     
     if (NumPRBs * 12 != IQSamples.size())
         throw invalid_argument("IQ samples need to be a multiple of 12 (Full RBs)");
-
-
 
     Payload = vector<uint8_t>(eCPRIHeaderSize + OranHeadersSize + IQSamples.size() * 2); // Note: If I and Q use 2 bytes each need to adjuse
     
@@ -63,12 +60,14 @@ OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8
    FillIQ(IQSamples); 
 }
 
-
+const std::vector<uint8_t>& OranPacket::GetPayload() const
+{
+    return Payload;
+}
 
 OranPacket::OranPacket(const OranOptions &PacketInformation, const vector<pair<int8_t, int8_t>> &IQSamples)
 {
 
-    
     uint8_t NumPRBs = IQSamples.size() / 12;
     
     if (NumPRBs * 12 != IQSamples.size())
