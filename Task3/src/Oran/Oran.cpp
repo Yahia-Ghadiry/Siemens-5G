@@ -1,18 +1,21 @@
 #include "Oran.h"
 #include <cstdint>
+#include <stdexcept>
 
 using std::vector;
 using std::copy;
 using std::fill;
 using std::pair;
+using std::invalid_argument;
+
 OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SympolID, const uint16_t &PRBStart, const vector<pair<int8_t, int8_t>> &IQSamples)
 {
 
     
     uint8_t NumPRBs = IQSamples.size() / 12;
     
-    
-
+    if (NumPRBs * 12 != IQSamples.size())
+        throw invalid_argument("IQ samples need to be a multiple of 12 (Full RBs)");
 
 
 

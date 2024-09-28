@@ -62,7 +62,7 @@ EthernetOptions::EthernetOptions(const string &FileName)
                 throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must Option for Eth. Not found // \n Line is :" + line + "\nOptions is: " + EthernetMember);
             
         }
-
+        else if (line.substr(0, line.find('.')) == "Oran"); // Ignore Oran options
         // Checks if line doesn't start with a commant or isn't emptpy
         else if (line.find("//") != 0 && !CheckLineEmpty(line))
             throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must start with option or comment // \n Line is :" + line);

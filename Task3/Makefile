@@ -1,4 +1,4 @@
-TARGET := program
+TARGET := program.elf
 SRC_DIR := src
 BLD_DIR := build
 
@@ -14,7 +14,7 @@ CFLAGS := -Wall
 .SECONDEXPANSION:
 
 all: $(OBJS) | $(BLD_DIR)/
-	$(CC) $(CFLAGS) $^ -o $(TARGET).elf
+	$(CC) $(CFLAGS) $^ -o $(TARGET)
 
 $(BLD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) | $(BLD_DIR)/$$(dir %)
 	@echo Building $< into $@
