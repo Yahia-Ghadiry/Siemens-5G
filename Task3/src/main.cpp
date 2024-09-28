@@ -25,8 +25,10 @@ int main(int argc, const char * argv[])
 
     EthernetFrame frame(ethernetOptions);
     
-    //frame.SetPayload(oranOptions.GetPacket().GetPayload());
-    std::cout << oranOptions.GetPacket() << std::endl; 
+    frame.SetPayload(oranOptions.GetPacket().GetPayload());
+    std::cout << oranOptions.GetPacket() << std::endl;
+
+    int NumberOfFrames;
 /*
     
     for (int i = 0; i < TotalNumBursts; i++)

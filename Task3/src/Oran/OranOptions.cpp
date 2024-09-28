@@ -93,7 +93,10 @@ OranOptions::OranOptions(const string &FileName)
 
 OranPacket OranOptions::GetPacket()
 {
-    vector<pair<int8_t, int8_t>> IQSamples(nRBPerPacket * 12);
+
+    int RBs = (PRBStart + nRBPerPacket) > MaxRBs ? (MaxRBs - PRBStart) : nRBPerPacket;
+
+    vector<pair<int8_t, int8_t>> IQSamples(RBs * 12);
 
     if (PayloadType == "random")
         std::generate(IQSamples.begin(), IQSamples.end(), RandPair);
@@ -102,7 +105,7 @@ OranPacket OranOptions::GetPacket()
         string line;
         pair<int8_t, int8_t> IQSample;
             
-        for(int i = 0; i < nRBPerPacket * 12; i++)
+        for(int i = 0; i < RBs * 12; i++)
         {
             if(getline(IQSamplesFile, line))
             {
@@ -128,12 +131,12 @@ OranPacket OranOptions::GetPacket()
     SeqID %= 256;
 
     // Add to PRB if at end
-    PRBStart += PRBStart + nRBPerPacket > () ? MaxRBs - nRBPerPacket;
+    PRBStart += RBs;
 
 
-    if (PRBStart == MaxRBs) // bad
+    if (PRBStart == MaxRBs)
     {
-        PRBStart %= MaxRBs == 0 ? 273 : MaxRBs;
+        PRBStart %= MaxRBs;
         SymbolID++;
 
         if (SymbolID == 14)
@@ -144,6 +147,13 @@ OranPacket OranOptions::GetPacket()
             if (SlotID == nSlots)
             {
                 SlotID %= nSlots;
+                SubFrameID++;
+            
+                if (SubFrameID == 10)
+                {
+                    SubFrameID %= 10;
+                    FrameID++;
+                }
             }
 
         }
