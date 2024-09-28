@@ -1,12 +1,14 @@
 #include "Oran.h"
 #include <cstdint>
 #include <stdexcept>
+#include <iomanip>
 
 using std::vector;
 using std::copy;
 using std::fill;
 using std::pair;
 using std::invalid_argument;
+using std::ostream;
 
 OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SymbolID, const uint16_t &PRBStart, const vector<pair<int8_t, int8_t>> &IQSamples)
 {
@@ -57,14 +59,14 @@ OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8
     *(this->NumPRBUp) = NumPRBs;
 
 
-   FillIQ(IQSamples); 
+    FillIQ(IQSamples); 
 }
 
 OranPacket::OranPacket(const OranOptions &PacketInformation, const vector<pair<int8_t, int8_t>> &IQSamples)
 {
 
     uint8_t NumPRBs = IQSamples.size() / 12;
-    
+    uint16_t eCPRIPayloadSize = OranHeadersSize + IQSamples.size() * 2; 
     if (NumPRBs * 12 != IQSamples.size())
         throw invalid_argument("IQ samples need to be a multiple of 12 (Full RBs)");
 
@@ -93,10 +95,11 @@ OranPacket::OranPacket(const OranOptions &PacketInformation, const vector<pair<i
     // Setting everything in the correct bit postions
     fill(this->eCPRIVersion_Contacation, this->eCPRIVersion_Contacation + 1, 0x00);
     copy(eCPRIType_IQdata.begin(), eCPRIType_IQdata.end(), this->eCPRIMessageType);
-    *(this->eCPRIPayloadSize) = OranHeadersSize + IQSamples.size() * 2; 
+    *(this->eCPRIPayloadSize) = eCPRIPayloadSize >> 8; 
+    *(this->eCPRIPayloadSize + 1) = eCPRIPayloadSize & 0x00FF; // Payload size stored in 16 bits 
     fill(this->eCPRI_RTC, this->eCPRI_RTC + 2, 0x00);
     *(this->eCPRISeqID) = PacketInformation.SeqID;
-
+    
     fill(this->OranDirection_Version_fIndex, this->OranDirection_Version_fIndex + 1, 0x00);
     *(this->FrameID) = PacketInformation.FrameID;
     *(this->SubFrameID_SlotIDp1) = (PacketInformation.SubFrameID << 4) + ((PacketInformation.SlotID >> 2) & 0b00001111);
@@ -106,8 +109,8 @@ OranPacket::OranPacket(const OranOptions &PacketInformation, const vector<pair<i
     *(this->SectionIDp2_rb_symlc_StartPRBUp1) += ((PacketInformation.PRBStart >> 8) & 0b00000011); 
     *(this->StartPRBUp2) = (PacketInformation.PRBStart & 0b11111111);
     *(this->NumPRBUp) = NumPRBs;
-
-
+    
+    fill(this->IQSamples, Payload.end(), 0x11);
     FillIQ(IQSamples); 
 }
 
@@ -133,3 +136,25 @@ void OranPacket::FillIQ(const std::vector<std::pair<int8_t, int8_t>> &IQSamples)
 OranPacket::~OranPacket()
 {
 }
+
+ostream &operator<<(ostream &os, const OranPacket &oranPacket)
+{
+    int ByteNo = 0;
+    
+    for (const uint8_t &byte: oranPacket.Payload)
+    {
+        os << std::setfill('0') << std::setw(2) << std::uppercase << std::hex << static_cast<int>(byte);
+        ByteNo++;
+        ByteNo %= 4;
+        if (ByteNo == 0)
+        {
+            os << std::endl;
+        }
+    }
+
+    // Restoring defaults
+    os << std::setfill(' ') << std::setw(0) << std::nouppercase << std::dec;
+    
+    return os;
+}
+

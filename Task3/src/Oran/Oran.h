@@ -7,6 +7,7 @@
 #include <string>
 #include <utility>
 #include <fstream>
+#include <ostream>
 
 struct OranOptions;
 
@@ -55,6 +56,8 @@ class OranPacket
         const std::vector<uint8_t>& GetPayload() const;
 
         ~OranPacket();
+
+        friend std::ostream &operator<<(std::ostream &os, const OranPacket &oranPacket);   
     
     private:
         void FillIQ(const std::vector<std::pair<int8_t, int8_t>> &IQSamples);

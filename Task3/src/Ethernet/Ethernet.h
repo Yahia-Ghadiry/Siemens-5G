@@ -47,7 +47,7 @@ class EthernetFrame
 
         ~EthernetFrame();
 
-        friend std::ostream &operator<<(std::ostream &os, const EthernetFrame &EthernetFrame);   
+        friend std::ostream &operator<<(std::ostream &os, const EthernetFrame &ethernetFrame);   
 
 
     private:
