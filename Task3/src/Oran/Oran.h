@@ -49,9 +49,9 @@ class OranPacket
     public:
         
         OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SympolID, const uint16_t &PRBStart, const std::vector<std::pair<int8_t, int8_t>> &IQSamples);
-        OranPacket(const OranOptions &PacketInforamtion, const std::vector<std::pair<int8_t, int8_t>> &IQSamples);
+        OranPacket(const OranOptions &PacketInforamtion, const std::vector<std::pair<int8_t, int8_t>> &IQSamples); // TODO
 
-        std::vector<uint8_t>& GetPayload() const; // TODO
+        const std::vector<uint8_t>& GetPayload() const; // TODO
 
         ~OranPacket();
     
@@ -61,12 +61,12 @@ class OranPacket
 
 struct OranOptions
 {
-    int SCS_kHz;
+    // Read From file
+    int nSlots; // calculate from SCS
     int MaxRBs;
     int nRBPerPacket;
     std::string PayloadType;
     std::string PayloadFile;
-    
     
     // Current Packet Configuration
     uint8_t SeqID;
@@ -78,11 +78,8 @@ struct OranOptions
 
     OranOptions(const std::string &FileName);
     
-    void CheckConfiguration(); // TODO
-    OranPacket GetPacket(); // TODO
+    const OranPacket& GetPacket(); // TODO
     
-    // Make MoreOptions than GetPacket
-
     ~OranOptions();
 
 

@@ -52,6 +52,7 @@ class EthernetFrame
 
     private:
         
+
         void CalculateFCS();
         void FillIFGs();
     

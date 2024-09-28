@@ -12,9 +12,12 @@ using std::stoi;
 using std::min;
 
 bool CheckLineEmptyOran(const string &line);
+int intlog2(int x);
 
 OranOptions::OranOptions(const string &FileName)
 {
+    uint32_t SCS_kHz; // not using int to make sure when doing error checking sum of ctz and clz are 31
+
     ifstream ConfigFile(FileName);
     if (ConfigFile.fail())
         throw invalid_argument("File :" + FileName + " Doesn't exist, Please input the correct file name.");
@@ -65,6 +68,11 @@ OranOptions::OranOptions(const string &FileName)
 
     ConfigFile.close();
 
+
+    if (SCS_kHz % 15 != 0 || __builtin_ctz(SCS_kHz / 15) + __builtin_clz(SCS_kHz / 15) != 31) // Fast way to check if power of 2
+        throw invalid_argument("SCS need to be in the form 15 * 2^u");
+    nSlots = SCS_kHz / 15;
+
     SeqID = 0;
     FrameID = 0;
     SubFrameID = 0;
@@ -78,7 +86,6 @@ OranOptions::~OranOptions()
 {
 }
 
-
 bool CheckLineEmptyOran(const string &line)
 {
     for (const char &c: line)
@@ -89,4 +96,8 @@ bool CheckLineEmptyOran(const string &line)
     }
 
     return true;
-}   
+}
+
+int intlog2(int x)
+{
+}
