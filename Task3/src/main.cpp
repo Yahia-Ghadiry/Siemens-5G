@@ -25,34 +25,41 @@ int main(int argc, const char * argv[])
 
     EthernetFrame frame(ethernetOptions);
     
-    frame.SetPayload(oranOptions.GetPacket().GetPayload());
-    std::cout << oranOptions.GetPacket() << std::endl;
 
-    int NumberOfFrames;
-/*
+    int NumberOfFrames = ethernetOptions.CaptureSize_ms / 10;
+
+    if (NumberOfFrames * 10 != ethernetOptions.CaptureSize_ms)
+        std::cout << "Warning Capture Size only implemented for 10ms Multiples. It will be rounded down." << std::endl;
     
-    for (int i = 0; i < TotalNumBursts; i++)
+    int SlotSize = 0; // TODO Should add a better way to calculate Symbol Size
+    
+    while (true)
     {
-        for (int j = 0; j < ethernetOptions.BurstSize; j++)
-        {
-            vector<uint8_t> DummyPayload(ethernetOptions.MaxPacketSize, 0x00);
-            // If we want to fill the vector with random data
-            //std::generate(DummyPayload.begin(), DummyPayload.end(), std::rand);
+        
+            frame.SetPayload(oranOptions.GetPacket().GetPayload());
+            if (oranOptions.FrameID == NumberOfFrames) // break when enough frames read
+                break;
+            OuputFile << frame;
+            SlotSize += frame.GetFrameSize();
+            if (oranOptions.SymbolID == 0) // Check if starting new Symbol
+            {
+              
+                int SlotSize_b = SlotSize * 8;
+                float SlotTime_us = (float) SlotSize_b / (ethernetOptions.Linerate_Gbs * 1000);
+                float IFGsTime_us = ((float) 1000 /  oranOptions.nSlots) - SlotTime_us;
+                int NumIFGsPerSlot = (IFGsTime_us * ethernetOptions.Linerate_Gbs * 1000) / 8;
+                NumIFGsPerSlot += 4 - NumIFGsPerSlot % 4;
+                
+                for (int j = 0; j < NumIFGsPerSlot; j++)
+                {
+                    OuputFile << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(EthernetFrame::IFG);
+                    if (j % 4 ==3)
+                    OuputFile << std::endl;
+                }
 
-            EthernetFrame ethernetFrame(ethernetOptions);
-            ethernetFrame.SetPayload(DummyPayload);
-            
-            OuputFile << ethernetFrame; 
-        }
-        for (int j = 0; j < NumIFGsPerBurst; j++)
-        {
+                SlotSize = 0;
+            }
 
-            OuputFile << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(EthernetFrame::IFG);
-            if (j % 4 ==3)
-                OuputFile << std::endl;
-        }
     }
-
-*/
     return 0;
 }

@@ -90,7 +90,6 @@ OranOptions::OranOptions(const string &FileName)
     PRBStart = 0;
 }
 
-
 OranPacket OranOptions::GetPacket()
 {
 
@@ -129,7 +128,7 @@ OranPacket OranOptions::GetPacket()
     // Calculating for next packet
     SeqID++;
     SeqID %= 256;
-
+    
     // Add to PRB if at end
     PRBStart += RBs;
 

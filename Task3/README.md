@@ -25,3 +25,4 @@ Replace input_options.txt with options file name.
 Assuming I and Q take only one byte each
 Assuming 14 OFFDM symbols in for each slot (not extended Cyclic Prefix)
 Assuming MaxNRB is Accouriding to Spec
+Assuming Sending IFGs after full Slot

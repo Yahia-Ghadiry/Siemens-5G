@@ -42,6 +42,7 @@ class EthernetFrame
         EthernetFrame(const EthernetOptions &FrameConfigrations);
         
         void SetPayload(const std::vector<uint8_t> &Payload);  
+        int GetFrameSize();
 
         // TODO Need more setters and getters 
 

@@ -107,6 +107,14 @@ void EthernetFrame::SetPayload(const std::vector<uint8_t> &Payload)
     FillIFGs();
 }
 
+
+int EthernetFrame::GetFrameSize()
+{
+    return Frame.size();
+}
+
+
+
 void EthernetFrame::CalculateFCS()
 {
     // Calculating the size of FrameDivion, and shifting it if it isn't a multiple of 4
