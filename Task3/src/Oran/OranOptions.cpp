@@ -1,6 +1,5 @@
 #include "Oran.h"
 
-#include <fstream>
 #include <stdexcept>
 
 
@@ -12,7 +11,6 @@ using std::stoi;
 using std::min;
 
 bool CheckLineEmptyOran(const string &line);
-int intlog2(int x);
 
 OranOptions::OranOptions(const string &FileName)
 {
@@ -23,7 +21,7 @@ OranOptions::OranOptions(const string &FileName)
         throw invalid_argument("File :" + FileName + " Doesn't exist, Please input the correct file name.");
 
     string line;
-    
+        
     int LineNo = 0;
 
     while (getline(ConfigFile, line))
@@ -54,7 +52,10 @@ OranOptions::OranOptions(const string &FileName)
             else if (OranMember == "PayloadType")
                 PayloadType = OranMemberValue;
             else if (OranMember == "Payload")
-                PayloadFile = OranMemberValue;
+            {
+                string IQSamplesFileName = OranMemberValue;
+                IQSamplesFile = ifstream(IQSamplesFileName);
+            }
             else
                 throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must Option for Oran. Not found // \n Line is :" + line + "\nOptions is: " + OranMember);
             
@@ -96,8 +97,4 @@ bool CheckLineEmptyOran(const string &line)
     }
 
     return true;
-}
-
-int intlog2(int x)
-{
 }

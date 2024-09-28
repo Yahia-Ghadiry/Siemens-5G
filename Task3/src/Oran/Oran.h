@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <fstream>
 
 struct OranOptions;
 
@@ -66,8 +67,8 @@ struct OranOptions
     int MaxRBs;
     int nRBPerPacket;
     std::string PayloadType;
-    std::string PayloadFile;
-    
+    std::ifstream IQSamplesFile;
+
     // Current Packet Configuration
     uint8_t SeqID;
     uint8_t FrameID;
