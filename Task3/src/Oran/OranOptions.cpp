@@ -50,9 +50,9 @@ OranOptions::OranOptions(const string &FileName)
             if (OranMember == "SCS")
                 SCS_kHz = stoi(OranMemberValue);
             else if (OranMember == "MaxNrb")
-                MaxRBs = stoi(OranMemberValue) == 273 ? 0 : stoi(OranMemberValue);
+                MaxRBs = stoi(OranMemberValue) == 0 ? 273 : stoi(OranMemberValue);
             else if (OranMember == "NrbPerPacket")
-                nRBPerPacket = stoi(OranMemberValue) == 273 ? 0 : stoi(OranMemberValue);
+                nRBPerPacket = stoi(OranMemberValue) == 0 ? 273 : stoi(OranMemberValue);
             else if (OranMember == "PayloadType")
                 PayloadType = OranMemberValue;
             else if (OranMember == "Payload")
@@ -122,6 +122,33 @@ OranPacket OranOptions::GetPacket()
     }
 
     OranPacket Packet(*this, IQSamples);
+
+    // Calculating for next packet
+    SeqID++;
+    SeqID %= 256;
+
+    // Add to PRB if at end
+    PRBStart += PRBStart + nRBPerPacket > () ? MaxRBs - nRBPerPacket;
+
+
+    if (PRBStart == MaxRBs) // bad
+    {
+        PRBStart %= MaxRBs == 0 ? 273 : MaxRBs;
+        SymbolID++;
+
+        if (SymbolID == 14)
+        {
+            SymbolID %= 14;
+            SlotID++;
+
+            if (SlotID == nSlots)
+            {
+                SlotID %= nSlots;
+            }
+
+        }
+        
+    }
 
     return Packet;
 }

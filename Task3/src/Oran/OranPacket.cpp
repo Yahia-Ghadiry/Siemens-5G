@@ -13,7 +13,8 @@ using std::ostream;
 OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SymbolID, const uint16_t &PRBStart, const vector<pair<int8_t, int8_t>> &IQSamples)
 {
 
-    uint8_t NumPRBs = IQSamples.size() / 12;
+    int NumPRBs = IQSamples.size() / 12;
+    uint16_t eCPRIPayloadSize = OranHeadersSize + IQSamples.size() * 2;
     
     if (NumPRBs * 12 != IQSamples.size())
         throw invalid_argument("IQ samples need to be a multiple of 12 (Full RBs)");
@@ -44,7 +45,8 @@ OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8
     // Setting everything in the correct bit postions
     fill(this->eCPRIVersion_Contacation, this->eCPRIVersion_Contacation + 1, 0x00);
     copy(eCPRIType_IQdata.begin(), eCPRIType_IQdata.end(), this->eCPRIMessageType);
-    *(this->eCPRIPayloadSize) = OranHeadersSize + IQSamples.size() * 2; 
+    *(this->eCPRIPayloadSize) = eCPRIPayloadSize >> 8; 
+    *(this->eCPRIPayloadSize + 1) = eCPRIPayloadSize & 0x00FF; // Payload size stored in 16 bits 
     fill(this->eCPRI_RTC, this->eCPRI_RTC + 2, 0x00);
     *(this->eCPRISeqID) = SeqID;
 
@@ -56,7 +58,7 @@ OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8
     copy(SectionID_rb_symlc_Configuration.begin(), SectionID_rb_symlc_Configuration.end(), this->SectionIDp1);
     *(this->SectionIDp2_rb_symlc_StartPRBUp1) += ((PRBStart >> 8) & 0b00000011); 
     *(this->StartPRBUp2) = (PRBStart & 0b11111111);
-    *(this->NumPRBUp) = NumPRBs;
+    *(this->NumPRBUp) = NumPRBs == 273 ? 0 : NumPRBs;
 
 
     FillIQ(IQSamples); 
@@ -65,8 +67,9 @@ OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8
 OranPacket::OranPacket(const OranOptions &PacketInformation, const vector<pair<int8_t, int8_t>> &IQSamples)
 {
 
-    uint8_t NumPRBs = IQSamples.size() / 12;
-    uint16_t eCPRIPayloadSize = OranHeadersSize + IQSamples.size() * 2; 
+    int NumPRBs = IQSamples.size() / 12;
+    uint16_t eCPRIPayloadSize = OranHeadersSize + IQSamples.size() * 2;
+    
     if (NumPRBs * 12 != IQSamples.size())
         throw invalid_argument("IQ samples need to be a multiple of 12 (Full RBs)");
 
@@ -108,9 +111,8 @@ OranPacket::OranPacket(const OranOptions &PacketInformation, const vector<pair<i
     copy(SectionID_rb_symlc_Configuration.begin(), SectionID_rb_symlc_Configuration.end(), this->SectionIDp1);
     *(this->SectionIDp2_rb_symlc_StartPRBUp1) += ((PacketInformation.PRBStart >> 8) & 0b00000011); 
     *(this->StartPRBUp2) = (PacketInformation.PRBStart & 0b11111111);
-    *(this->NumPRBUp) = NumPRBs;
+    *(this->NumPRBUp) = NumPRBs == 273 ? 0 : NumPRBs;
     
-    fill(this->IQSamples, Payload.end(), 0x11);
     FillIQ(IQSamples); 
 }
 
