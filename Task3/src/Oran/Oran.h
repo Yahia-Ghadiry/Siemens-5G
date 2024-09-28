@@ -49,12 +49,14 @@ class OranPacket
     
     public:
         
-        OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SympolID, const uint16_t &PRBStart,const std::vector<std::pair<int8_t, uint8_t>> &IQSamples);
+        OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SympolID, const uint16_t &PRBStart, const std::vector<std::pair<int8_t, int8_t>> &IQSamples);
 
         
 
         ~OranPacket();
-
+    
+    private:
+        void FillIQ(const std::vector<std::pair<int8_t, int8_t>> &IQSamples);
 };
 
 #endif

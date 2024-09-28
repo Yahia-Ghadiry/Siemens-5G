@@ -5,8 +5,7 @@ using std::vector;
 using std::copy;
 using std::fill;
 using std::pair;
-
-OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SympolID, const uint16_t &PRBStart, const vector<pair<int8_t, int8_t> &IQSamples)
+OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8_t &SubFrameID, const uint8_t &SlotID, const uint8_t &SympolID, const uint16_t &PRBStart, const vector<pair<int8_t, int8_t>> &IQSamples)
 {
 
     
@@ -14,8 +13,13 @@ OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8
     
     
 
+
+
+
     Payload = vector<uint8_t>(eCPRIHeaderSize + OranHeadersSize + IQSamples.size() * 2); // Note: If I and Q use 2 bytes each need to adjuse
     
+
+    // Setting Iterators for each section
     this->eCPRIVersion_Contacation = Payload.begin();
     this->eCPRIMessageType = this->eCPRIVersion_Contacation + 1;
     this->eCPRIPayloadSize = this->eCPRIMessageType + 1;
@@ -53,10 +57,22 @@ OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8
     *(this->NumPRBUp) = NumPRBs;
 
 
-    // TODO convert IQSamples into apporpiate format and copy it
-    
+   FillIQ(IQSamples); 
 }
 
+
+// Converts IQ samples to appropiate formate and puts them in the Packet
+// Seprate function for future use If we need compression
+void OranPacket::FillIQ(const std::vector<std::pair<int8_t, int8_t>> &IQSamples)
+{
+
+    for (int i = 0; IQSamples.size(); i++)
+    {
+        *(this->IQSamples + 2 * i) = static_cast<uint8_t>(IQSamples[i].first);
+        *(this->IQSamples + 2 * i + 1) = static_cast<uint8_t>(IQSamples[i].second);
+    }
+
+}
 
 OranPacket::~OranPacket()
 {
