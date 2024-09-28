@@ -65,6 +65,12 @@ OranOptions::OranOptions(const string &FileName)
 
     ConfigFile.close();
 
+    SeqID = 0;
+    FrameID = 0;
+    SubFrameID = 0;
+    SlotID = 0;
+    SymbolID = 0;
+    PRBStart = 0;
 }
 
 

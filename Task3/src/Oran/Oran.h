@@ -73,7 +73,7 @@ struct OranOptions
     uint8_t FrameID;
     uint8_t SubFrameID;
     uint8_t SlotID; 
-    uint8_t SympolID;
+    uint8_t SymbolID;
     uint16_t PRBStart;
 
     OranOptions(const std::string &FileName);
