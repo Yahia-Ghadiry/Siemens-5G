@@ -1,4 +1,5 @@
 #include "Ethernet/Ethernet.h"
+#include "Oran/Oran.h"
 #include <cstdint>
 #include <vector>
 #include <iostream>
@@ -18,11 +19,15 @@ int main(int argc, const char * argv[])
 
 
     EthernetOptions ethernetOptions(argv[1]);
+    OranOptions oranOptions(argv[1]);
     ofstream OuputFile(argv[2]);
+    
 
-
-    int TotalNumBursts = ethernetOptions.CalcTotalBursts();
-    int NumIFGsPerBurst = ethernetOptions.CalcTotalIFGsPerBurst();
+    EthernetFrame frame(ethernetOptions);
+    
+    frame.SetPayload(oranOptions.GetPacket().GetPayload());
+    std::cout << frame << std::endl; 
+/*
     
     for (int i = 0; i < TotalNumBursts; i++)
     {
@@ -46,6 +51,6 @@ int main(int argc, const char * argv[])
         }
     }
 
-
+*/
     return 0;
 }

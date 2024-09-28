@@ -59,7 +59,7 @@ EthernetOptions::EthernetOptions(const string &FileName)
             else if (EthernetMember == "BurstPeriodicity_us")
                 BurstPeriodicity_us = stoi(EthernetMemberValue);
             else
-                throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must Option for Eth. Not found // \n Line is :" + line + "\nOptions is: " + EthernetMember);
+                throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must Option for Eth. Not found \n Line is :" + line + "\n Options is: " + EthernetMember);
             
         }
         else if (line.substr(0, line.find('.')) == "Oran"); // Ignore Oran options

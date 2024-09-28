@@ -60,11 +60,6 @@ OranPacket::OranPacket(const uint8_t &SeqID, const uint8_t &FrameID, const uint8
    FillIQ(IQSamples); 
 }
 
-const std::vector<uint8_t>& OranPacket::GetPayload() const
-{
-    return Payload;
-}
-
 OranPacket::OranPacket(const OranOptions &PacketInformation, const vector<pair<int8_t, int8_t>> &IQSamples)
 {
 
@@ -113,7 +108,12 @@ OranPacket::OranPacket(const OranOptions &PacketInformation, const vector<pair<i
     *(this->NumPRBUp) = NumPRBs;
 
 
-   FillIQ(IQSamples); 
+    FillIQ(IQSamples); 
+}
+
+const std::vector<uint8_t>& OranPacket::GetPayload() const
+{
+    return Payload;
 }
 
 
@@ -122,7 +122,7 @@ OranPacket::OranPacket(const OranOptions &PacketInformation, const vector<pair<i
 void OranPacket::FillIQ(const std::vector<std::pair<int8_t, int8_t>> &IQSamples)
 {
 
-    for (int i = 0; IQSamples.size(); i++)
+    for (int i = 0; i < IQSamples.size(); i++)
     {
         *(this->IQSamples + 2 * i) = static_cast<uint8_t>(IQSamples[i].first);
         *(this->IQSamples + 2 * i + 1) = static_cast<uint8_t>(IQSamples[i].second);

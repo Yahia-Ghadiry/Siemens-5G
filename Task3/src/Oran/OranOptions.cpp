@@ -49,7 +49,7 @@ OranOptions::OranOptions(const string &FileName)
             
             if (OranMember == "SCS")
                 SCS_kHz = stoi(OranMemberValue);
-            else if (OranMember == "MaxMrb")
+            else if (OranMember == "MaxNrb")
                 MaxRBs = stoi(OranMemberValue) == 273 ? 0 : stoi(OranMemberValue);
             else if (OranMember == "NrbPerPacket")
                 nRBPerPacket = stoi(OranMemberValue) == 273 ? 0 : stoi(OranMemberValue);
@@ -62,7 +62,7 @@ OranOptions::OranOptions(const string &FileName)
                     throw invalid_argument("File :" + FileName + " Doesn't exist, Please input the correct file name.");
             }
             else
-                throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must Option for Oran. Not found // \n Line is :" + line + "\nOptions is: " + OranMember);
+                throw invalid_argument("Error at Line: " + to_string(LineNo) + "\n Line must Option for Oran. Not found \n Line is :" + line + "\n Options is: " + OranMember);
             
         }
         else if (line.substr(0, line.find('.')) == "Eth"); // Ignore Eth options
@@ -74,8 +74,8 @@ OranOptions::OranOptions(const string &FileName)
 
     ConfigFile.close();
 
-    if (PayloadType != "Random" && PayloadType != "Fixed")
-        throw invalid_argument("Oran.PayloadType Needs to be either Random or Fixed");
+    if (PayloadType != "random" && PayloadType != "fixed")
+        throw invalid_argument("Oran.PayloadType Needs to be either random or fixed");
 
 
     if (SCS_kHz % 15 != 0 || __builtin_ctz(SCS_kHz / 15) + __builtin_clz(SCS_kHz / 15) != 31) // Fast way to check if power of 2
@@ -94,9 +94,10 @@ OranOptions::OranOptions(const string &FileName)
 OranPacket OranOptions::GetPacket()
 {
     vector<pair<int8_t, int8_t>> IQSamples(nRBPerPacket * 12);
-    if (PayloadType == "Random")
+
+    if (PayloadType == "random")
         std::generate(IQSamples.begin(), IQSamples.end(), RandPair);
-    else if (PayloadType == "Fixed")
+    else if (PayloadType == "fixed")
     {
         string line;
         pair<int8_t, int8_t> IQSample;
@@ -119,6 +120,7 @@ OranPacket OranOptions::GetPacket()
 
         }
     }
+
     OranPacket Packet(*this, IQSamples);
 
     return Packet;
